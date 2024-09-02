@@ -31,7 +31,7 @@ jobs:
 
           # Copy build output to the appropriate directory in the showcase repo
 
-          mkdir -p haborvault/chromabay/${GITHUB_REF_NAME}
+          mkdir -p harborvault/chromabay/${GITHUB_REF_NAME}
           cp -R dist/* harborvault/chromabay/${GITHUB_REF_NAME}/
 
           # Commit and push changes to the showcase repo
