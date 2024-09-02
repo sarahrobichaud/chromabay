@@ -1,12 +1,12 @@
 // Header.js
 export function Header() {
   return (
-    <header className="bg-blue-200 py-8">
+    <header className="bg-green-200 py-8">
       <div className="max-w-[90%] mx-auto w-full">
         <div className="flex justify-between items-center">
           <span className="text-3xl flex gap-2 items-center">
             <img src="./assets/vite.svg"></img>
-            Brand
+            Lovely Inc.
           </span>
           <ul className="list-none flex gap-5">
             <li>Services</li>
