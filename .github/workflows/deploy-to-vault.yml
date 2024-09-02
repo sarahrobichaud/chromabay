@@ -24,6 +24,11 @@ jobs:
       - name: Build the project
         run: npm run build
 
+      - name: Configure Git
+        run: |
+          git config --global user.email "robichaudsarah@outlook.com"
+          git config --global user.name "Sarah Robichaud"
+
       - name: Deploy to the central showcase repo
         run: |
           # Clone the central showcase repository
