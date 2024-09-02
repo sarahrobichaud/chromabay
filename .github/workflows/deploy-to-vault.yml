@@ -30,9 +30,11 @@ jobs:
           git config --global user.name "Sarah Robichaud"
 
       - name: Deploy to the central showcase repo
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           # Clone the central showcase repository
-          git clone https://github.com/sarahrobichaud/harborvault.git
+          git clone https://$GH_TOKEN@github.com/sarahrobichaud/harborvault.git
 
           # Copy build output to the appropriate directory in the showcase repo
 
