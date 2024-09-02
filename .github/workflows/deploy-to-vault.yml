@@ -41,6 +41,7 @@ jobs:
           mkdir -p harborvault/chromabay/${GITHUB_REF_NAME}/build
           cp -R dist/* harborvault/chromabay/${GITHUB_REF_NAME}/build
 
+          touch harborvault/chromabay/v${GITHUB_REF_NAME}/source-link.txt
           echo "Source code available at: https://github.com/sarahrobichaud/chromabay/tree/${GITHUB_REF_NAME}" > harborvault/chromabay/v${GITHUB_REF_NAME}/source-link.txt
 
           # Commit and push changes to the showcase repo
