@@ -3,7 +3,7 @@ name: Build and Deploy to Vault Repo
 on:
   push:
     tags:
-      - "v*.*.*" # This triggers the action on version tags like v1.0.0
+      - "*-v*.*.*" # This triggers the action on version tags like v1.0.0
 
 jobs:
   build:
@@ -30,10 +30,12 @@ jobs:
           git clone https://github.com/sarahrobichaud/harborvault.git
 
           # Copy build output to the appropriate directory in the showcase repo
-          cp -R dist/* harborvault/chromabay/v${GITHUB_REF_NAME}/
+
+          mkdir -p haborvault/chromabay/${GITHUB_REF_NAME}
+          cp -R dist/* harborvault/chromabay/${GITHUB_REF_NAME}/
 
           # Commit and push changes to the showcase repo
           cd harborvault
           git add .
-          git commit -m "Deploy chromabay version ${GITHUB_REF_NAME}"
+          git commit -m "Deploy ${GITHUB_REF_NAME}"
           git push origin main
