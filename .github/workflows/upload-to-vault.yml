@@ -1,0 +1,106 @@
+name: Upload to Vault Repo
+
+on:
+  push:
+    tags:
+      - "*-v*.*.*" # This triggers the action on version tags like v1.0.0
+
+env:
+  PROJECT_NAME: vite-ssr-demo # Replace with your project name
+  DIST_DIR: dist # Replace with your dist directory name if different
+  ENTRY: server.js # Optional entry point file (e.g., server.js)
+  VAULT_NAME: harborvault
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the project
+        run: npm run build
+
+      - name: Prepare artifact directory
+        run: mkdir -p artifact && cp -r ${{ env.DIST_DIR }} artifact/
+
+      - name: Upload dist directory (including the folder itself)
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist-artifact
+          path: artifact/
+
+      - name: Conditionally upload entry file
+        if: ${{ (env.ENTRY && env.ENTRY != '') }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: entry-file
+          path: ${{ env.ENTRY }}
+        continue-on-error: true # Ignore error if file doesn't exist
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v2
+
+      - name: Download dist artifact (including folder)
+        uses: actions/download-artifact@v2
+        with:
+          name: dist-artifact
+
+      - name: Conditionally download entry file artifact
+        if: ${{ (env.ENTRY && env.ENTRY != '') }}
+        uses: actions/download-artifact@v2
+        with:
+          name: entry-file
+        continue-on-error: true # Ignore error if file doesn't exist
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git config --global user.name "${{ github.actor }}"
+
+      - name: Deploy to the central showcase repo
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          # Clone the central showcase repository
+          git clone https://${{ env.GH_TOKEN }}@github.com/${{ github.actor }}/${{ env.VAULT_NAME }}.git
+
+
+           # Define the target directory for this project and version
+          TARGET_DIR="${{ env.VAULT_NAME }}/${{ env.PROJECT_NAME }}/${GITHUB_REF_NAME}/build/${{ env.DIST_DIR }}"
+
+          # Remove existing directory if it exists
+          if [ -d "$TARGET_DIR" ]; then
+            rm -rf "$TARGET_DIR"
+          fi
+
+          # Create the directory structure again
+          mkdir -p "$TARGET_DIR"
+
+          # Copy the entire dist folder to the appropriate directory in the showcase repo
+          cp -R ${{ env.DIST_DIR }}/* "$TARGET_DIR"
+
+          # Conditionally copy entry file if it exists
+          if [ -f "${{ env.ENTRY }}" ]; then
+            cp ${{ env.ENTRY }} ${{ env.VAULT_NAME }}/${{ env.PROJECT_NAME }}/${GITHUB_REF_NAME}/build/${{ env.ENTRY}}
+          fi
+
+          echo "Source code available at: https://github.com/${{ github.actor }}/${{ env.PROJECT_NAME }}/tree/${GITHUB_REF_NAME}" > harborvault/${{ env.PROJECT_NAME }}/${GITHUB_REF_NAME}/source-link.txt
+
+          # Commit and push changes to the showcase repo
+          cd ${{ env.VAULT_NAME }}
+          git add .
+          git commit -m "Deploy ${GITHUB_REF_NAME}"
+          git push origin main
