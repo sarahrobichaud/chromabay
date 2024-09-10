@@ -6,4 +6,7 @@
 export default {
   environment: "static",
   buildDirectory: "dist",
+  build: {
+    command: "npm run build",
+  },
 };

@@ -34,16 +34,9 @@ declare module "dockview" {
   type DKStaticConfig = {
     environment: "static";
     buildDirectory: string;
+    build: DKBuildConfig; // Optional build command (e.g., 'npm run build')
   } & DKBaseConfig;
 
-  type DKCustomEnvConfig = {
-    environment: "custom";
-    container: {
-      dockerfile: string;
-    };
-  };
-
-  // Node configuration for node environments
   type DKNodeConfig = {
     environment: "node";
     buildDirectory: string;
@@ -52,8 +45,5 @@ declare module "dockview" {
   } & DKBaseConfig;
 
   // Union type for both node and static environments
-  export type DockviewConfig =
-    | DKNodeConfig
-    | DKStaticConfig
-    | DKCustomEnvConfig;
+  export type DockviewConfig = DKNodeConfig | DKStaticConfig;
 }
