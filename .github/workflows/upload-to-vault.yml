@@ -6,9 +6,9 @@ on:
       - "*-v*.*.*" # This triggers the action on version tags like v1.0.0
 
 env:
-  PROJECT_NAME: vite-ssr-demo # Replace with your project name
+  PROJECT_NAME: chromabay # Replace with your project name
   DIST_DIR: dist # Replace with your dist directory name if different
-  ENTRY: server.js # Optional entry point file (e.g., server.js)
+  ENTRY: "" # Optional entry point file (e.g., server.js)
   VAULT_NAME: harborvault
 
 jobs:
