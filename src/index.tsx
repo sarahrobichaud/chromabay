@@ -2,7 +2,7 @@ import { Footer } from "./components/Footer.tsx";
 import { Header } from "./components/Header.tsx";
 
 let posts: number[] = [];
-for (let i = 0; i < 15; i++) {
+for (let i = 0; i < 3; i++) {
   posts[i] = i;
 }
 
